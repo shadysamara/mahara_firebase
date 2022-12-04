@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "34715809740",
+    "project_id": "bti-maharat",
+    "storage_bucket": "bti-maharat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:34715809740:android:631372560813d3dc624f69",
+        "android_client_info": {
+          "package_name": "com.example.mahara_fb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "34715809740-v9f2s2a5b7tck2pl8uitmcit66f888co.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9kGvyhPW9JlKrmb5-EhQbYKn92N3NHos"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "34715809740-v9f2s2a5b7tck2pl8uitmcit66f888co.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "34715809740-9jjvgsos3hod6gijnqbeo41hmgbsrmcf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.maharaFb"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
