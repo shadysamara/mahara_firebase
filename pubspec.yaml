@@ -38,6 +38,8 @@ dependencies:
   firebase_core: ^1.24.0
   provider: ^6.0.4
   cloud_firestore: ^3.5.1
+  firebase_storage: ^10.3.11
+  image_picker: ^0.8.6
 
 dependency_overrides:
   firebase_core_platform_interface: 4.5.1

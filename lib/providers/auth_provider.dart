@@ -1,10 +1,13 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mahara_fb/app_router/app_router.dart';
 import 'package:mahara_fb/helpers/auth_helper.dart';
 import 'package:mahara_fb/helpers/firestore_helper.dart';
+import 'package:mahara_fb/helpers/storage_helper.dart';
 import 'package:mahara_fb/models/app_user.dart';
 import 'package:mahara_fb/views/auth/screens/login_screen.dart';
 import 'package:mahara_fb/views/auth/screens/register_screen.dart';
@@ -24,18 +27,29 @@ class AuthProvider extends ChangeNotifier {
   TextEditingController registerlnameCOntroller = TextEditingController();
 
   TextEditingController registerPhoneCOntroller = TextEditingController();
+  TextEditingController profileUserNameController = TextEditingController();
+  TextEditingController profilePhoneController = TextEditingController();
+  TextEditingController profileEmailController = TextEditingController();
 
+  AppUser? loggedAppUser;
   late User loggedUSer;
   login() async {
     String? userId = await AuthHelper.authHelper
         .login(loginEmailCOntroller.text.trim(), loginPasswordCOntroller.text);
     if (userId != null) {
       getUserFromFirestore(userId);
+      AppRouter.navigateAndReplaceScreen(HomeScreen());
     }
   }
 
-  getUserFromFirestore(String id) {
-    FirestoreHelper.firestoreHelper.getUserFromFirestore('GxvoC8G1S7pbUE8sYtX0');
+  getUserFromFirestore(String id) async {
+    loggedAppUser =
+        await FirestoreHelper.firestoreHelper.getUserFromFirestore(id);
+    loggedAppUser!.id = id;
+    profileUserNameController.text = loggedAppUser!.fname ?? '';
+    profilePhoneController.text = loggedAppUser!.phoneNumber ?? '';
+    profileEmailController.text = loggedAppUser!.email ?? '';
+    notifyListeners();
   }
 
   register() async {
@@ -65,6 +79,7 @@ class AuthProvider extends ChangeNotifier {
       //navigation to auth screen
       AppRouter.navigateAndReplaceScreen(RegisterScreen());
     } else {
+      getUserFromFirestore(user.uid);
       AppRouter.navigateAndReplaceScreen(HomeScreen());
     }
   }
@@ -72,5 +87,26 @@ class AuthProvider extends ChangeNotifier {
   signOut() async {
     AuthHelper.authHelper.signout();
     AppRouter.navigateAndReplaceScreen(LoginScreen());
+  }
+
+  updateUserImage() async {
+    XFile? pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      File file = File(pickedFile.path);
+      String imageUrl = await StorageHelper.storageHelper.uploadImage(file);
+      log(imageUrl);
+      loggedAppUser!.imageUrl = imageUrl;
+      await FirestoreHelper.firestoreHelper.updateUsernfo(loggedAppUser!);
+      loggedAppUser!.imageUrl = imageUrl;
+      notifyListeners();
+    }
+  }
+
+  updateUserInfo() async {
+    loggedAppUser!.fname = profileUserNameController.text;
+    loggedAppUser!.phoneNumber = profilePhoneController.text;
+    FirestoreHelper.firestoreHelper.updateUsernfo(loggedAppUser!);
+    getUserFromFirestore(loggedAppUser!.id!);
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:mahara_fb/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
@@ -16,9 +18,84 @@ class HomeScreen extends StatelessWidget {
               icon: Icon(Icons.logout))
         ],
       ),
-      body: Center(
-        child: Text('Home Page'),
-      ),
+      body: Consumer<AuthProvider>(builder: (context, provider, c) {
+        return provider.loggedAppUser == null
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Column(
+                children: [
+                  SizedBox(
+                    height: 30,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      provider.updateUserImage();
+                    },
+                    child: Container(
+                      height: 150,
+                      width: 150,
+                      color: Colors.grey,
+                      child: provider.loggedAppUser!.imageUrl == null
+                          ? Icon(Icons.camera)
+                          : Image.network(
+                              provider.loggedAppUser!.imageUrl!,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  ProfileItem(
+                      'FullName:',
+                      ((provider.loggedAppUser!.fname!) +
+                          " " +
+                          (provider.loggedAppUser!.lname!)),
+                      provider.profileUserNameController),
+                  ProfileItem(
+                      'Phone Number:',
+                      ((provider.loggedAppUser!.phoneNumber!)),
+                      provider.profilePhoneController),
+                  ProfileItem('Email:', ((provider.loggedAppUser!.email!)),
+                      provider.profileEmailController),
+                  ElevatedButton(
+                      onPressed: () {
+                        provider.updateUserInfo();
+                      },
+                      child: Text('Update UserInfo'))
+                ],
+              );
+      }),
+    );
+  }
+}
+
+class ProfileItem extends StatelessWidget {
+  String label;
+  String content;
+  TextEditingController controller;
+  ProfileItem(this.label, this.content, this.controller);
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Container(
+      margin: EdgeInsets.all(5),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+          color: Colors.grey.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(10)),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Text(label,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        SizedBox(
+          width: 20,
+        ),
+        Expanded(
+          child:
+              TextField(controller: controller, style: TextStyle(fontSize: 18)),
+        ),
+      ]),
     );
   }
 }

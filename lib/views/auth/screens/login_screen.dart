@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mahara_fb/app_router/app_router.dart';
+import 'package:mahara_fb/helpers/firestore_helper.dart';
+import 'package:mahara_fb/models/app_user.dart';
 import 'package:mahara_fb/providers/auth_provider.dart';
 import 'package:mahara_fb/views/auth/screens/register_screen.dart';
 import 'package:mahara_fb/views/auth/widgets/custom_textfield.dart';
@@ -26,7 +28,14 @@ class LoginScreen extends StatelessWidget {
                   onPressed: () {
                     AppRouter.navigateAndReplaceScreen(RegisterScreen());
                   },
-                  child: Text('Create new Account'))
+                  child: Text('Create new Account')),
+
+                  ElevatedButton(
+                  onPressed: () {
+
+                  },
+                  child: Text('firestore test'))
+
             ],
           );
         },
