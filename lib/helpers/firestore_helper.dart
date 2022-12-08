@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mahara_fb/admin/models/category.dart';
 import 'package:mahara_fb/models/app_user.dart';
 
 class FirestoreHelper {
@@ -23,4 +24,15 @@ class FirestoreHelper {
   updateUsernfo(AppUser appUser) async {
     await firestore.collection('users').doc(appUser.id).update(appUser.toMap());
   }
+
+  ///// admin functions
+  Future<String>createNewCategory(Category category) async {
+    DocumentReference<Map<String, dynamic>> document =
+        await firestore.collection('categories').add(category.toMap());
+    return document.id;
+  }
+
+  // Future<List<Category>> getAllCategories() async {}
+  deleteCategory(String id) async {}
+  updateCategory(Category newCategory) async {}
 }

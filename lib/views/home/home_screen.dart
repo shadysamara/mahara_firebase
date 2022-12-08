@@ -1,10 +1,13 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:mahara_fb/admin/models/category.dart';
+import 'package:mahara_fb/helpers/firestore_helper.dart';
 import 'package:mahara_fb/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
+  GlobalKey<FormState> formKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -23,48 +26,63 @@ class HomeScreen extends StatelessWidget {
             ? const Center(
                 child: CircularProgressIndicator(),
               )
-            : Column(
-                children: [
-                  SizedBox(
-                    height: 30,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      provider.updateUserImage();
-                    },
-                    child: Container(
-                      height: 150,
-                      width: 150,
-                      color: Colors.grey,
-                      child: provider.loggedAppUser!.imageUrl == null
-                          ? Icon(Icons.camera)
-                          : Image.network(
-                              provider.loggedAppUser!.imageUrl!,
-                              fit: BoxFit.cover,
-                            ),
+            : Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 30,
                     ),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  ProfileItem(
-                      'FullName:',
-                      ((provider.loggedAppUser!.fname!) +
-                          " " +
-                          (provider.loggedAppUser!.lname!)),
-                      provider.profileUserNameController),
-                  ProfileItem(
-                      'Phone Number:',
-                      ((provider.loggedAppUser!.phoneNumber!)),
-                      provider.profilePhoneController),
-                  ProfileItem('Email:', ((provider.loggedAppUser!.email!)),
-                      provider.profileEmailController),
-                  ElevatedButton(
-                      onPressed: () {
-                        provider.updateUserInfo();
+                    InkWell(
+                      onTap: () {
+                        provider.updateUserImage();
                       },
-                      child: Text('Update UserInfo'))
-                ],
+                      child: Container(
+                        height: 150,
+                        width: 150,
+                        color: Colors.grey,
+                        child: provider.loggedAppUser!.imageUrl == null
+                            ? Icon(Icons.camera)
+                            : Image.network(
+                                provider.loggedAppUser!.imageUrl!,
+                                fit: BoxFit.cover,
+                              ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    ProfileItem(
+                        'FullName:',
+                        ((provider.loggedAppUser!.fname!) +
+                            " " +
+                            (provider.loggedAppUser!.lname!)),
+                        provider.profileUserNameController),
+                    ProfileItem(
+                        'Phone Number:',
+                        ((provider.loggedAppUser!.phoneNumber!)),
+                        provider.profilePhoneController),
+                    ProfileItem('Email:', ((provider.loggedAppUser!.email!)),
+                        provider.profileEmailController),
+                    ElevatedButton(
+                        onPressed: () {
+                          bool isValid = formKey.currentState!.validate();
+                          if (isValid) {
+                            provider.updateUserInfo();
+                          }
+                        },
+                        child: Text('Update UserInfo')),
+                    ElevatedButton(
+                        onPressed: () async {
+                          Category category =
+                              Category(image: "image", name: 'name');
+                          String id = await FirestoreHelper.firestoreHelper
+                              .createNewCategory(category);
+                          log(id);
+                        },
+                        child: Text('Test Add Category'))
+                  ],
+                ),
               );
       }),
     );
@@ -92,8 +110,14 @@ class ProfileItem extends StatelessWidget {
           width: 20,
         ),
         Expanded(
-          child:
-              TextField(controller: controller, style: TextStyle(fontSize: 18)),
+          child: TextFormField(
+              validator: (String? x) {
+                if (x == null || x.isEmpty) {
+                  return "this field is required";
+                }
+              },
+              controller: controller,
+              style: TextStyle(fontSize: 18)),
         ),
       ]),
     );

@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mahara_fb/admin/models/category.dart';
+import 'package:mahara_fb/admin/views/add_new_category.dart';
 import 'package:mahara_fb/app_router/app_router.dart';
 import 'package:mahara_fb/helpers/auth_helper.dart';
 import 'package:mahara_fb/helpers/firestore_helper.dart';
@@ -80,7 +82,7 @@ class AuthProvider extends ChangeNotifier {
       AppRouter.navigateAndReplaceScreen(RegisterScreen());
     } else {
       getUserFromFirestore(user.uid);
-      AppRouter.navigateAndReplaceScreen(HomeScreen());
+      AppRouter.navigateAndReplaceScreen(AddNewCategory());
     }
   }
 
@@ -94,7 +96,8 @@ class AuthProvider extends ChangeNotifier {
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       File file = File(pickedFile.path);
-      String imageUrl = await StorageHelper.storageHelper.uploadImage(file);
+      String imageUrl =
+          await StorageHelper.storageHelper.uploadImage("profile_images", file);
       log(imageUrl);
       loggedAppUser!.imageUrl = imageUrl;
       await FirestoreHelper.firestoreHelper.updateUsernfo(loggedAppUser!);
@@ -109,4 +112,6 @@ class AuthProvider extends ChangeNotifier {
     FirestoreHelper.firestoreHelper.updateUsernfo(loggedAppUser!);
     getUserFromFirestore(loggedAppUser!.id!);
   }
+
+  
 }

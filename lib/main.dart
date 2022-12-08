@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:mahara_fb/admin/providers/admin_provider.dart';
 import 'package:mahara_fb/app_router/app_router.dart';
 import 'package:mahara_fb/firebase_options.dart';
 import 'package:mahara_fb/providers/auth_provider.dart';
@@ -21,10 +22,17 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<AuthProvider>(
+    return MultiProvider(providers: [
+      ChangeNotifierProvider<AuthProvider>(
       create: (context) {
         return AuthProvider();
-      },
+      },),
+        ChangeNotifierProvider<AdminProvider>(
+          create: (context) {
+            return AdminProvider();
+          },
+        ),
+    ],
       child: MaterialApp(
         navigatorKey: AppRouter.navKey,
         title: 'Flutter Demo',
