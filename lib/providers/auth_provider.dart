@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mahara_fb/admin/models/category.dart';
 import 'package:mahara_fb/admin/views/add_new_category.dart';
+import 'package:mahara_fb/admin/views/display_all_categories.dart';
 import 'package:mahara_fb/app_router/app_router.dart';
+import 'package:mahara_fb/customer/views/screens/customer_main_page.dart';
 import 'package:mahara_fb/helpers/auth_helper.dart';
 import 'package:mahara_fb/helpers/firestore_helper.dart';
 import 'package:mahara_fb/helpers/storage_helper.dart';
@@ -40,13 +42,14 @@ class AuthProvider extends ChangeNotifier {
         .login(loginEmailCOntroller.text.trim(), loginPasswordCOntroller.text);
     if (userId != null) {
       getUserFromFirestore(userId);
-      AppRouter.navigateAndReplaceScreen(HomeScreen());
+      AppRouter.navigateAndReplaceScreen(DisplayAllCategoriesScreen());
     }
   }
 
   getUserFromFirestore(String id) async {
     loggedAppUser =
         await FirestoreHelper.firestoreHelper.getUserFromFirestore(id);
+    log(loggedAppUser!.email ?? 'not exist');
     loggedAppUser!.id = id;
     profileUserNameController.text = loggedAppUser!.fname ?? '';
     profilePhoneController.text = loggedAppUser!.phoneNumber ?? '';
@@ -81,8 +84,8 @@ class AuthProvider extends ChangeNotifier {
       //navigation to auth screen
       AppRouter.navigateAndReplaceScreen(RegisterScreen());
     } else {
-      getUserFromFirestore(user.uid);
-      AppRouter.navigateAndReplaceScreen(AddNewCategory());
+      await getUserFromFirestore(user.uid);
+      AppRouter.navigateAndReplaceScreen(CustomerMainPage());
     }
   }
 
@@ -112,6 +115,4 @@ class AuthProvider extends ChangeNotifier {
     FirestoreHelper.firestoreHelper.updateUsernfo(loggedAppUser!);
     getUserFromFirestore(loggedAppUser!.id!);
   }
-
-  
 }

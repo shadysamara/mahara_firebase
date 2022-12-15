@@ -6,14 +6,9 @@ class AppUser {
   String? phoneNumber;
   String? imageUrl;
   bool? isMale;
-  AppUser(
-    this.id,
-    this.fname,
-    this.lname,
-    this.phoneNumber,
-    this.email, [
-    this.imageUrl,
-  ]);
+  bool? isAdmin;
+  AppUser(this.id, this.fname, this.lname, this.phoneNumber, this.email,
+      [this.imageUrl, this.isAdmin = false]);
   Map<String, dynamic> toMap() {
     return {
       "email": email,
@@ -32,5 +27,6 @@ class AppUser {
     email = map['email'];
     imageUrl = map['imageUrl'];
     isMale = map['isMale'];
+    isAdmin = map['isAdmin'] ?? false;
   }
 }
